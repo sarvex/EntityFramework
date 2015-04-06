@@ -19,7 +19,7 @@ namespace Microsoft.Data.Entity.Utilities
         {
             if (ReferenceEquals(value, null))
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentNullException(parameterName);
             }
 
@@ -34,8 +34,8 @@ namespace Microsoft.Data.Entity.Utilities
         {
             if (ReferenceEquals(value, null))
             {
-                NotEmpty(parameterName, "parameterName");
-                NotEmpty(propertyName, "propertyName");
+                NotEmpty(parameterName, nameof(parameterName));
+                NotEmpty(propertyName, nameof(propertyName));
                 throw new ArgumentException(Strings.ArgumentPropertyNull(propertyName, parameterName));
             }
 
@@ -49,7 +49,7 @@ namespace Microsoft.Data.Entity.Utilities
 
             if (value.Count == 0)
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentException(Strings.CollectionArgumentIsEmpty(parameterName));
             }
 
@@ -71,7 +71,7 @@ namespace Microsoft.Data.Entity.Utilities
 
             if (e != null)
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw e;
             }
 
@@ -83,7 +83,7 @@ namespace Microsoft.Data.Entity.Utilities
             if (!ReferenceEquals(value, null)
                 && value.Length == 0)
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentException(Strings.ArgumentIsEmpty(parameterName));
             }
 
@@ -97,7 +97,7 @@ namespace Microsoft.Data.Entity.Utilities
 
             if (value.Any(e => e == null))
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentException(parameterName);
             }
 
@@ -109,7 +109,7 @@ namespace Microsoft.Data.Entity.Utilities
         {
             if (!Enum.IsDefined(typeof(T), value))
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentException(Strings.InvalidEnumValue(parameterName, typeof(T)));
             }
 
@@ -120,7 +120,7 @@ namespace Microsoft.Data.Entity.Utilities
         {
             if (!value.GetTypeInfo().IsClass)
             {
-                NotEmpty(parameterName, "parameterName");
+                NotEmpty(parameterName, nameof(parameterName));
                 throw new ArgumentException(Strings.InvalidEntityType(parameterName, value));
             }
 

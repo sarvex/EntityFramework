@@ -23,7 +23,7 @@ namespace Microsoft.Data.Entity.Metadata
         public Key([NotNull] IReadOnlyList<Property> properties)
         {
             Check.NotEmpty(properties, nameof(properties));
-            Check.HasNoNulls(properties, "properties");
+            Check.HasNoNulls(properties, nameof(properties));
             MetadataHelper.CheckSameEntityType(properties, "properties");
 
             Properties = properties;
