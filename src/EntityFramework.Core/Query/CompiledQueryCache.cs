@@ -213,8 +213,9 @@ namespace Microsoft.Data.Entity.Query
                 {
                     var unaryExpression = (UnaryExpression)expression;
 
-                    if (unaryExpression.Type.IsNullableType()
+                    if ((unaryExpression.Type.IsNullableType() 
                         && !unaryExpression.Operand.Type.IsNullableType())
+                        || unaryExpression.Type == typeof(object))
                     {
                         e = unaryExpression.Operand;
                     }
@@ -243,7 +244,11 @@ namespace Microsoft.Data.Entity.Query
 
                         _queryContext.ParameterValues.Add(parameterName, parameterValue);
 
-                        return Expression.Parameter(expression.Type, parameterName);
+                        return e.Type == expression.Type
+                            ? Expression.Parameter(e.Type, parameterName)
+                            : (Expression)Expression.Convert(
+                                Expression.Parameter(e.Type, parameterName),
+                                expression.Type);
                     }
                     catch (Exception exception)
                     {

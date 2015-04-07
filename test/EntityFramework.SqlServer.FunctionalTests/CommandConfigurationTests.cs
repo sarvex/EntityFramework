@@ -118,15 +118,17 @@ namespace Microsoft.Data.Entity.SqlServer.FunctionalTests
             var loggerFactory = new LoggerFactory();
 
             var selectExpression = new SelectExpression();
+            var logger = loggerFactory.CreateLogger("new");
+
             var queryCompilationContext = new RelationalQueryCompilationContext(
                 context.Model,
-                loggerFactory.CreateLogger("new"),
+                logger,
                 new LinqOperatorProvider(),
                 new RelationalResultOperatorHandler(),
                 source,
                 new EntityKeyFactorySource(new BoxedValueReaderSource()),
                 new AsyncQueryMethodProvider(),
-                new CompositeMethodCallTranslator());
+                new CompositeMethodCallTranslator(logger));
 
             return new CommandBuilder(selectExpression, queryCompilationContext);
         }
