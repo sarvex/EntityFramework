@@ -13,10 +13,7 @@ namespace Microsoft.Data.Entity.SqlServer.FunctionalTests
             base.From_sql_queryable_simple();
 
             Assert.Equal(
-                @"SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers
-) AS [c]",
+                @"SELECT * FROM Customers",
                 Sql);
         }
 
@@ -25,10 +22,7 @@ FROM (
             base.From_sql_queryable_filter();
 
             Assert.Equal(
-                @"SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE Customers.ContactName LIKE '%z%'
-) AS [c]",
+                @"SELECT * FROM Customers WHERE Customers.ContactName LIKE '%z%'",
                 Sql);
         }
         public override void From_sql_queryable_cached_by_query()
@@ -36,15 +30,9 @@ FROM (
             base.From_sql_queryable_cached_by_query();
 
             Assert.Equal(
-                @"SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE Customers.City = 'London'
-) AS [c]
+                @"SELECT * FROM Customers WHERE Customers.City = 'London'
 
-SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE Customers.City = 'Seattle'
-) AS [c]",
+SELECT * FROM Customers WHERE Customers.City = 'Seattle'",
                 Sql);
         }
 
@@ -76,12 +64,9 @@ WHERE [c].[ContactTitle] = @__title_0",
             base.From_sql_queryable_with_multiple_line_query();
 
             Assert.Equal(
-                @"SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT *
-    FROM Customers
-    WHERE Customers.City = 'London'
-) AS [c]",
+                @"SELECT *
+FROM Customers
+WHERE Customers.City = 'London'",
                 Sql);
         }
 
@@ -93,10 +78,7 @@ FROM (
                 @"p0: London
 p1: Sales Representative
 
-SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1
-) AS [c]",
+SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1",
                 Sql);
         }
 
@@ -108,18 +90,12 @@ FROM (
                 @"p0: London
 p1: Sales Representative
 
-SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1
-) AS [c]
+SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1
 
 p0: Madrid
 p1: Accounting Manager
 
-SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1
-) AS [c]",
+SELECT * FROM Customers WHERE City = @p0 AND ContactTitle = @p1",
                 Sql);
         }
 
@@ -129,10 +105,7 @@ FROM (
             base.From_sql_annotations_do_not_modify_successive_calls();
 
             Assert.Equal(
-                @"SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
-FROM (
-    SELECT * FROM Customers WHERE Customers.ContactName LIKE '%z%'
-) AS [c]
+                @"SELECT * FROM Customers WHERE Customers.ContactName LIKE '%z%'
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]",

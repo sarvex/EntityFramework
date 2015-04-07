@@ -19,25 +19,32 @@ namespace Microsoft.Data.Entity.Relational.Query.Sql
     public class DefaultSqlQueryGenerator : ThrowingExpressionTreeVisitor, ISqlExpressionVisitor, ISqlQueryGenerator
     {
         private IndentedStringBuilder _sql;
-        private List<string> _parameters;
+        private Dictionary<string, object> _parameters;
         private IDictionary<string, object> _parameterValues;
 
-        public virtual string GenerateSql(
-            SelectExpression selectExpression, IDictionary<string, object> parameterValues)
+        protected SelectExpression _selectExpression;
+
+        public DefaultSqlQueryGenerator([NotNull] SelectExpression selectExpression)
         {
             Check.NotNull(selectExpression, nameof(selectExpression));
+
+            _selectExpression = selectExpression;
+        }
+
+        public virtual string GenerateSql(IDictionary<string, object> parameterValues)
+        {
             Check.NotNull(parameterValues, nameof(parameterValues));
 
             _sql = new IndentedStringBuilder();
-            _parameters = new List<string>();
+            _parameters = new Dictionary<string, object>();
             _parameterValues = parameterValues;
 
-            selectExpression.Accept(this);
+            _selectExpression.Accept(this);
 
             return _sql.ToString();
         }
 
-        public virtual IEnumerable<string> Parameters => _parameters;
+        public virtual IDictionary<string, object> Parameters => _parameters;
 
         protected virtual IndentedStringBuilder Sql => _sql;
 
@@ -192,8 +199,7 @@ namespace Microsoft.Data.Entity.Relational.Query.Sql
                 {
                     var parameterName = "p" + index;
 
-                    _parameters.Add(parameterName);
-                    _parameterValues.Add(parameterName, rawSqlDerivedTableExpression.Parameters[index]);
+                    _parameters.Add(parameterName, rawSqlDerivedTableExpression.Parameters[index]);
                     substitutions[index] = ParameterPrefix + parameterName;
                 }
 
@@ -726,9 +732,9 @@ namespace Microsoft.Data.Entity.Relational.Query.Sql
         {
             _sql.Append(ParameterPrefix + parameterExpression.Name);
 
-            if (!_parameters.Contains(parameterExpression.Name))
+            if (!_parameters.ContainsKey(parameterExpression.Name))
             {
-                _parameters.Add(parameterExpression.Name);
+                _parameters.Add(parameterExpression.Name, _parameterValues[parameterExpression.Name]);
             }
 
             return parameterExpression;

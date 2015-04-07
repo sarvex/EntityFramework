@@ -9,10 +9,8 @@ namespace Microsoft.Data.Entity.Relational.Query.Sql
 {
     public interface ISqlQueryGenerator
     {
-        string GenerateSql(
-            [NotNull] SelectExpression selectExpression,
-            [NotNull] IDictionary<string, object> parameterValues);
+        string GenerateSql([NotNull] IDictionary<string, object> parameterValues);
 
-        IEnumerable<string> Parameters { get; }
+        IDictionary<string, object> Parameters { get; }
     }
 }
