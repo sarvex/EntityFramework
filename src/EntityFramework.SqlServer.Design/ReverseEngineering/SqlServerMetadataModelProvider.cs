@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.Data.Entity.Metadata;
@@ -688,6 +687,8 @@ else {
         {
             Check.NotNull(property, nameof(property));
             Check.NotNull(tableColumn, nameof(tableColumn));
+
+            property.IsNullable = tableColumn.IsNullable;
 
             if (property.Name != tableColumn.ColumnName)
             {
