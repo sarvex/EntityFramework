@@ -25,9 +25,6 @@ namespace Microsoft.Data.Entity.SqlServer.Design.ReverseEngineering
     {
         public const string SqlServerDbContextTemplate =
 @"@inherits Microsoft.Data.Entity.Relational.Design.Templating.RazorReverseEngineeringBase
-// Generated using Provider Assembly: @Model.ProviderAssembly
-// And Database Connection String: @Model.ConnectionString
-
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
 
@@ -129,9 +126,6 @@ bool firstNavigation = true;
         public const string SqlServerEntityTypeTemplate =
 @"@inherits Microsoft.Data.Entity.Relational.Design.Templating.RazorReverseEngineeringBase
 @using Microsoft.Data.Entity.SqlServer.Design.ReverseEngineering
-//
-// Generated code
-//
 @{
 string errorMessageAnnotation = Model.Helper.ErrorMessageAnnotation;
 }@if(errorMessageAnnotation != null) {
@@ -148,28 +142,30 @@ else {
 @:{
 @:    public class @Model.EntityType.Name
 @:    {
+    @if(Model.Helper.NavPropInitializers.Count > 0) {
 @:        public @(Model.EntityType.Name)()
 @:        {
-    @foreach(var navPropInitializer in Model.Helper.NavPropInitializers)
-    {
+        @foreach(var navPropInitializer in Model.Helper.NavPropInitializers)
+        {
 @:            @navPropInitializer.NavigationPropertyName = new HashSet<@navPropInitializer.PrincipalEntityTypeName>();
-    }
+        }
 @:        }
 @:
-@:        // Properties
+    }
     @foreach(var property in Model.Helper.OrderedEntityProperties)
     {
 @:        public @Model.Generator.CSharpCodeGeneratorHelper.GetTypeName(@property.ClrType) @property.Name { get; set; }
     }
+    @if(Model.Helper.NavigationProperties.Count > 0) {
 @:
-@:        // Navigation Properties
-    @foreach(var navProp in Model.Helper.NavigationProperties)
-    {
-        @if(navProp.ErrorAnnotation != null) {
+        @foreach(var navProp in Model.Helper.NavigationProperties)
+        {
+            @if(navProp.ErrorAnnotation != null) {
 @:        // @navProp.ErrorAnnotation
-        }
-        else {
+            }
+            else {
 @:        public virtual @navProp.Type @navProp.Name { get; set; }
+            }
         }
     }
 @:    }
