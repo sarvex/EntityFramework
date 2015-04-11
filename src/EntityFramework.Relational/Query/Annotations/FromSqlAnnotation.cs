@@ -3,11 +3,12 @@
 
 using System.Linq;
 using JetBrains.Annotations;
+using Microsoft.Data.Entity.Query;
 using Microsoft.Data.Entity.Utilities;
 
 namespace Microsoft.Data.Entity.Relational.Query.Annotations
 {
-    public class FromSqlAnnotation
+    public class FromSqlAnnotation : QueryAnnotation
     {
         public FromSqlAnnotation([NotNull] string sql)
             : this(sql, new object[0])
@@ -15,6 +16,7 @@ namespace Microsoft.Data.Entity.Relational.Query.Annotations
         }
 
         public FromSqlAnnotation([NotNull] string sql, [NotNull] object[] parameters)
+            : base(null)
         {
             Check.NotEmpty(sql, nameof(sql));
             Check.NotNull(parameters, nameof(parameters));

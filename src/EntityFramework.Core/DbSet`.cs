@@ -286,7 +286,7 @@ namespace Microsoft.Data.Entity
         ///         the expression tree.
         ///     </para>
         /// </summary>
-        IQueryable<TEntity> IAnnotatableQueryable<TEntity>.AnnotateQuery(object annotation)
+        IQueryable<TEntity> IAnnotatableQueryable<TEntity>.AnnotateQuery(QueryAnnotation annotation)
         {
             throw new NotImplementedException();
         }

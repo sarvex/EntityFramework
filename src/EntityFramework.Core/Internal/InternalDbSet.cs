@@ -134,7 +134,7 @@ namespace Microsoft.Data.Entity.Internal
 
         IServiceProvider IAccessor<IServiceProvider>.Service => ((IAccessor<IServiceProvider>)_context).Service;
 
-        IQueryable<TEntity> IAnnotatableQueryable<TEntity>.AnnotateQuery([NotNull] object annotation)
+        IQueryable<TEntity> IAnnotatableQueryable<TEntity>.AnnotateQuery([NotNull] QueryAnnotation annotation)
         {
             Check.NotNull(annotation, nameof(annotation));
 

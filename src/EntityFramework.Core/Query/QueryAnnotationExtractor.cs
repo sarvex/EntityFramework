@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using JetBrains.Annotations;
+using Microsoft.Data.Entity.Query.Annotations;
 using Microsoft.Data.Entity.Query.ResultOperators;
 using Microsoft.Data.Entity.Utilities;
 using Remotion.Linq;
@@ -30,17 +31,26 @@ namespace Microsoft.Data.Entity.Query
         {
             foreach (var resultOperator
                 in queryModel.ResultOperators
-                    .Where(ro => ro is IncludeResultOperator
-                            || ro is AsNoTrackingResultOperator
-                            || ro is AnnotateQueryResultOperator)
+                    .OfType<QueryAnnotationResultOperator>()
+                    .ToList())
+            {
+                resultOperator.Annotation.QueryModel = queryModel;
+                resultOperator.Annotation.QuerySource = queryModel.MainFromClause;
+                queryAnnotations.Add(resultOperator.Annotation);
+                queryModel.ResultOperators.Remove(resultOperator);
+            }
+
+            foreach (var resultOperator
+                in queryModel.ResultOperators
+                    .OfType<IncludeResultOperator>()
                     .ToList())
             {
                 queryAnnotations.Add(
-                    new QueryAnnotation(resultOperator)
-                        {
-                            QueryModel = queryModel,
-                            QuerySource = queryModel.MainFromClause
-                        });
+                    new IncludeQueryAnnotation(resultOperator)
+                    {
+                        QueryModel = queryModel,
+                        QuerySource = queryModel.MainFromClause
+                    });
 
                 queryModel.ResultOperators.Remove(resultOperator);
             }

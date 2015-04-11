@@ -8,15 +8,13 @@ using Remotion.Linq.Clauses;
 
 namespace Microsoft.Data.Entity.Query
 {
-    public class QueryAnnotation
+    public abstract class QueryAnnotation
     {
         private IQuerySource _querySource;
         private QueryModel _queryModel;
 
-        public QueryAnnotation([NotNull] ResultOperatorBase resultOperator)
+        public QueryAnnotation([CanBeNull] ResultOperatorBase resultOperator)
         {
-            Check.NotNull(resultOperator, nameof(resultOperator));
-
             ResultOperator = resultOperator;
         }
 

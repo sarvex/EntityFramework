@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Data.Entity.Internal;
 using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Query.Annotations;
 using Microsoft.Data.Entity.Query.ExpressionTreeVisitors;
 using Microsoft.Data.Entity.Query.ResultOperators;
 using Microsoft.Data.Entity.Utilities;
@@ -222,19 +223,19 @@ namespace Microsoft.Data.Entity.Query
             foreach (var include
                 in from queryAnnotation in QueryCompilationContext.QueryAnnotations
                    let includeResultOperator = queryAnnotation.ResultOperator as IncludeResultOperator
-                    where includeResultOperator != null
-                    let navigationPath
-                        = BindNavigationPathMemberExpression(
-                            (MemberExpression)includeResultOperator.NavigationPropertyPath,
-                            (ns, _) => BindChainedNavigations(ns, includeResultOperator.ChainedNavigationProperties).ToArray())
-                    orderby navigationPath != null
-                            && navigationPath.First().PointsToPrincipal
-                    select new
-                        {
-                            navigationPath,
-                            queryAnnotation.QuerySource,
-                            includeResultOperator.NavigationPropertyPath
-                        })
+                   where includeResultOperator != null
+                   let navigationPath
+                       = BindNavigationPathMemberExpression(
+                           (MemberExpression)includeResultOperator.NavigationPropertyPath,
+                           (ns, _) => BindChainedNavigations(ns, includeResultOperator.ChainedNavigationProperties).ToArray())
+                   orderby navigationPath != null
+                           && navigationPath.First().PointsToPrincipal
+                   select new
+                   {
+                       navigationPath,
+                       queryAnnotation.QuerySource,
+                       includeResultOperator.NavigationPropertyPath
+                   })
             {
                 if (include.navigationPath != null)
                 {
@@ -282,7 +283,7 @@ namespace Microsoft.Data.Entity.Query
             if (chainedNavigationProperties != null)
             {
                 foreach (
-                    var navigation in 
+                    var navigation in
                         from propertyInfo in chainedNavigationProperties
                         let entityType
                             = QueryCompilationContext.Model
@@ -328,8 +329,8 @@ namespace Microsoft.Data.Entity.Query
                 = new EntityResultFindingExpressionTreeVisitor(QueryCompilationContext.Model)
                     .FindEntitiesInResult(queryModel.SelectClause.Selector)
                     .Where(qsre => !QueryCompilationContext.QueryAnnotations
-                        .Any(qa => qa.ResultOperator is AsNoTrackingResultOperator
-                                   && qa.QuerySource == qsre.ReferencedQuerySource))
+                        .OfType<AsNoTrackingQueryAnnotation>()
+                        .Any(qa => qa.QuerySource == qsre.ReferencedQuerySource))
                     .ToList();
 
             if (querySourceReferenceExpressionsToTrack.Any())
@@ -370,14 +371,14 @@ namespace Microsoft.Data.Entity.Query
         {
             return
                 (from qsre in querySourceReferenceExpressions
-                    select
-                        (Func<TResult, object>)
-                            AccessorFindingExpressionTreeVisitor
-                                .FindAccessorLambda(
-                                    qsre,
-                                    selector,
-                                    Expression.Parameter(typeof(TResult)))
-                                .Compile()
+                 select
+                     (Func<TResult, object>)
+                         AccessorFindingExpressionTreeVisitor
+                             .FindAccessorLambda(
+                                 qsre,
+                                 selector,
+                                 Expression.Parameter(typeof(TResult)))
+                             .Compile()
                     )
                     .ToList();
         }
@@ -413,7 +414,8 @@ namespace Microsoft.Data.Entity.Query
                 return true;
             }
 
-            return QueryCompilationContext.QueryAnnotations.Where(en => en.ResultOperator is AsNoTrackingResultOperator)
+            return QueryCompilationContext.QueryAnnotations
+                .OfType<AsNoTrackingQueryAnnotation>()
                 .All(qa => qa.QuerySource != querySource);
         }
 
